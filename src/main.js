@@ -64,7 +64,7 @@ function startSignalLoadingText(titleEl, subEl) {
 }
 
 function injectGlobalFixStyles() {
-    const id = "NOVA-fix-styles-v3";
+    const id = "GTPO-fix-styles-v3";
     if (document.getElementById(id)) return;
 
     const style = document.createElement("style");
@@ -260,7 +260,7 @@ const I18N = {
             statusIdle: "Waiting for parameters",
             statusActive: "Analyzing…",
             statusDone: "Signal prepared",
-            idleLine1: "Select pair, expiry and AI model to see how NOVA core reacts.",
+            idleLine1: "Select pair, expiry and AI model to see how NOVA AI core reacts.",
             idleLine2: "The analyzer always shows which patterns the engine is focusing on.",
             modelLines: {
                 orion: [
@@ -491,7 +491,7 @@ const I18N = {
                     title: "Arquitectura NOVA Trading Core",
                     text: "Señales filtradas, gestión de riesgo y protección contra ruido.",
                     modalTag: "POR QUÉ NUESTRO BOT",
-                    modalTitle: "GTPO Trading Core — motor del mini-bot",
+                    modalTitle: "NOVA Trading Core — motor del mini-bot",
                     modalHtml: `<p>Recibe precios y descarta lo que no pasa filtros.</p>`,
                 },
                 {
@@ -601,10 +601,10 @@ const I18N = {
             favOnly: "केवल फ़ेवरेट",
         },
         info: {
-            title: "GTPO AI",
+            title: "NOVA AI",
             cards: [
                 { id: "models", label: "VIP AI मॉडल", title: "Orion, Mega, Atlas, Unity", text: "VIP में extra cores और filters.", modalTag: "VIP AI", modalTitle: "Trading cores", modalHtml: `<p>VIP unlocks more cores & filters.</p>` },
-                { id: "bot", label: "BOT कैसे काम करता है", title: "GTPO Trading Core", text: "Filtered signals, risk-management.", modalTag: "WHY", modalTitle: "Core engine", modalHtml: `<p>Price stream -> filters -> signal.</p>` },
+                { id: "bot", label: "BOT कैसे काम करता है", title: "NOVA Trading Core", text: "Filtered signals, risk-management.", modalTag: "WHY", modalTitle: "Core engine", modalHtml: `<p>Price stream -> filters -> signal.</p>` },
                 { id: "pocket", label: "POCKET OPTION", title: "एक broker पर focus", text: "Pocket Option specialization.", modalTag: "POCKET", modalTitle: "Deep focus", modalHtml: `<p>Better modeling & stability.</p>` },
             ],
         },
@@ -747,7 +747,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (saved && I18N[saved]) currentLang = saved;
     } catch {}
 
-    setupDailyTurnover();
     setupFavorites();
     setupInfoCards();
     setupFaqAccordion();
@@ -847,45 +846,6 @@ function setupModeToggle() {
         const current = track.querySelector(".mode-option.is-active") || buttons[0];
         if (current) movePill(current);
     });
-}
-
-function setupDailyTurnover() {
-    const valueEl = document.querySelector(".js-balance-value");
-    const changeEl = document.querySelector(".js-balance-change");
-    const changeAmountEl = document.querySelector(".js-balance-change-amount");
-    if (!valueEl || !changeEl || !changeAmountEl) return;
-
-    const MS_PER_DAY = 24 * 60 * 60 * 1000;
-    const START_BASE = 1500;
-    const DAILY_GROWTH = 45;
-    const startDateUTC = Date.UTC(2024, 0, 1);
-
-    const now = new Date();
-    const utcMs = now.getTime() + now.getTimezoneOffset() * 60 * 1000;
-    const mskMs = utcMs + 3 * 60 * 60 * 1000;
-    const dayIndex = Math.max(0, Math.floor((mskMs - startDateUTC) / MS_PER_DAY));
-    const prevDayIndex = Math.max(0, dayIndex - 1);
-
-    function valueForDay(i) {
-        const noise = (Math.sin(i * 1.7) + Math.sin(i * 0.4)) * 5;
-        return START_BASE + i * DAILY_GROWTH + noise;
-    }
-
-    const today = valueForDay(dayIndex);
-    const yesterday = valueForDay(prevDayIndex);
-    const diff = today - yesterday;
-    const pct = yesterday > 0 ? (diff / yesterday) * 100 : 0;
-
-    valueEl.textContent = formatUsd(today);
-    changeEl.textContent = (pct >= 0 ? "+" : "") + pct.toFixed(2) + "%";
-    changeAmountEl.textContent = (diff >= 0 ? "+" : "") + diff.toFixed(2);
-
-    function formatUsd(v) {
-        return v.toLocaleString("en-US", {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    }
 }
 
 function setupFavorites() {
